@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// API以外は全てindexテンプレを参照
+Route::get('/{any?}', function () {
+    return view('index');
+})->where('any', '.+');
