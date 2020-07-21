@@ -961,22 +961,73 @@ var render = function() {
             _c("label", { attrs: { for: "username" } }, [_vm._v("Name")]),
             _vm._v(" "),
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.registerForm.name,
+                  expression: "registerForm.name"
+                }
+              ],
               staticClass: "form__item",
-              attrs: { type: "text", id: "username" }
+              attrs: { type: "text", id: "username" },
+              domProps: { value: _vm.registerForm.name },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.registerForm, "name", $event.target.value)
+                }
+              }
             }),
             _vm._v(" "),
             _c("label", { attrs: { for: "email" } }, [_vm._v("Email")]),
             _vm._v(" "),
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.registerForm.email,
+                  expression: "registerForm.email"
+                }
+              ],
               staticClass: "form__item",
-              attrs: { type: "text", id: "email" }
+              attrs: { type: "text", id: "email" },
+              domProps: { value: _vm.registerForm.email },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.registerForm, "email", $event.target.value)
+                }
+              }
             }),
             _vm._v(" "),
             _c("label", { attrs: { for: "password" } }, [_vm._v("Password")]),
             _vm._v(" "),
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.registerForm.password,
+                  expression: "registerForm.password"
+                }
+              ],
               staticClass: "form__item",
-              attrs: { type: "password", id: "password" }
+              attrs: { type: "password", id: "password" },
+              domProps: { value: _vm.registerForm.password },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.registerForm, "password", $event.target.value)
+                }
+              }
             }),
             _vm._v(" "),
             _c("label", { attrs: { for: "password-confirmation" } }, [
@@ -984,8 +1035,29 @@ var render = function() {
             ]),
             _vm._v(" "),
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.registerForm.password_confirmation,
+                  expression: "registerForm.password_confirmation"
+                }
+              ],
               staticClass: "form__item",
-              attrs: { type: "password", id: "password-confirmation" }
+              attrs: { type: "password", id: "password-confirmation" },
+              domProps: { value: _vm.registerForm.password_confirmation },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(
+                    _vm.registerForm,
+                    "password_confirmation",
+                    $event.target.value
+                  )
+                }
+              }
             }),
             _vm._v(" "),
             _vm._m(1)
