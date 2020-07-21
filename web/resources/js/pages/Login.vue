@@ -4,8 +4,34 @@
             <li class="tab__item" :class="{'tab__item--active' : tab === 1}" @click="tab = 1">Login</li>
             <li class="tab__item" :class="{'tab__item--active' : tab === 2}" @click="tab = 2">Register</li>
         </ul>
-        <div class="panel" v-show="tab === 1">Login Form</div>
-        <div class="panel" v-show="tab === 2">Register Form</div>
+        <div class="panel" v-show="tab === 1">
+            <!-- submitイベントのハンドラとしてloginメソッドを指定 -->
+            <!-- preventでデフォルトのフォーム送信の挙動をキャンセルしてページリロードを抑制 -->
+            <form class="form" @submit.prevent="login">
+                <label for="login-email">Email</label>
+                <input type="text" class="form__item" id="login-email" v-model="loginForm.email">
+                <label for="login-password">Password</label>
+                <input type="text" class="form__item" id="login-password" v-model="loginForm.password">
+                <div class="form__button">
+                    <button type="submit" class="button button--inverse">login</button>
+                </div>
+            </form>
+        </div>
+        <div class="panel" v-show="tab === 2">
+            <form class="form" @submit.prevent="register">
+                <label for="username">Name</label>
+                <input type="text" class="form__item" id="username">
+                <label for="email">Email</label>
+                <input type="text" class="form__item" id="email">
+                <label for="password">Password</label>
+                <input type="password" class="form__item" id="password">
+                <label for="password-confirmation">Password (confirm)</label>
+                <input type="password" class="form__item" id="password-confirmation">
+                <div class="form_button">
+                    <button type="submit" class="button button--inverse">register</button>
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -13,7 +39,26 @@
 export default {
     data () {
         return {
-            tab: 1
+            tab: 1,
+            // フォームの入力値をスクリプト内部で参照するためv-modelでデータバインディング
+            loginForm: {
+                email: '',
+                password: '',
+            },
+            registerForm: {
+                name: '',
+                email: '',
+                password: '',
+                password_confirmation: '',
+            }
+        }
+    },
+    methods: {
+        login () {
+            console.log(this.loginForm)
+        },
+        register () {
+            console.log(this.registerForm)
         }
     }
 }
