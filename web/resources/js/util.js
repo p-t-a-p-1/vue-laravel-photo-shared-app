@@ -10,6 +10,8 @@ export function getCookieValue (searchKey) {
 
     let val = ''
 
+    // name=12345;token=67890;key=abcdeで取得して
+    // ; で split して更に = で split で引数の searchKey と一致する値を返す
     document.cookie.split(';').forEach(cookie => {
         const [key, value] = cookie.split('=')
         if (key === searchKey) {

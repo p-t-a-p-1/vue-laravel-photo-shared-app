@@ -3,6 +3,8 @@ import Vue from 'vue'
 import router from './router'
 // vuexの使用
 import store from './store'
+// CSRF対策の使用
+import './bootstrap'
 // ルートコンポーネント
 import App from './App.vue'
 
