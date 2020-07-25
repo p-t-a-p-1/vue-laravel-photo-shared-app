@@ -1,6 +1,10 @@
 /**
  * Vuex（状態管理ライブラリ）のストアの設定
+ *
+ * アクション → コミットでミューテーション呼び出し → ステート更新
  */
+
+import axios from "axios"
 
 // データの入れ物（ログイン中のユーザーデータ）
 const state = {
@@ -19,7 +23,17 @@ const mutations = {
 
 // ステートを非同期処理で更新するためのメソッド
 // APIとの通信などの非同期処理を行った後にミューテーションを呼び出してステートを更新する
-const actions = {}
+const actions = {
+    /**
+     *
+     * @param {Object} context ミューテーションを呼び出すためのcommitメソッドが入ってるオブジェクト
+     * @param {Object} data
+     */
+    async register (context, data) {
+        const response = await axios.post('/api/register', data)
+        context.commit('setUser', response.data)
+    }
+}
 
 // 名前空間で分けておく
 // モジュールに分けた時にステートやミューテーションの名前が被ってもモジュール名で区別できる

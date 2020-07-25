@@ -57,8 +57,16 @@ export default {
         login () {
             console.log(this.loginForm)
         },
-        register () {
-            console.log(this.registerForm)
+        async register () {
+
+            // authストアのregisterアクションを呼び出す
+            // stores/index.js で Vue.use(Vuex) で宣言したので this.$store から ストアを参照できる
+            // dispatchメソッドでvuexのアクション呼び出し
+            // 第一引数でアクションの名前指定（今回は名前空間つき）、第二でフォームの入力値
+            await this.$store.dispatch('auth/register', this.registerForm)
+
+            // 上の await 非同期処理の完了を待ってからトップページに移動
+            this.$router.push('/')
         }
     }
 }
