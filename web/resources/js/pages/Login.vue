@@ -54,8 +54,14 @@ export default {
         }
     },
     methods: {
-        login () {
-            console.log(this.loginForm)
+        async login () {
+
+            // autストアのloginアクションを呼び出す
+            await this.$store.dispatch('auth/login', this.loginForm)
+
+            // トップページに移動
+            this.$router.push('/')
+
         },
         async register () {
 
