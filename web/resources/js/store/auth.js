@@ -1,5 +1,5 @@
 /**
- * Vuex（状態管理ライブラリ）のストアの設定
+ * Vuex（状態管理ライブラリ）のauthストアの設定
  *
  * アクション → コミットでミューテーション呼び出し → ステート更新
  */
@@ -9,7 +9,13 @@ const state = {
 }
 
 // ステートの内容から算出される値（ユーザーがログイン中であるかどうか）
-const getters = {}
+// ステートをもとに演算した結果が欲しい時にゲッターを使う
+const getters = {
+    // ログインチェックに使用
+    check: state => !! state.user,
+    // ログインユーザーの名前（nullの場合は空）
+    username: state => state.user ? state.user.name : ''
+}
 
 // ステートを同期処理で更新するためのメソッド
 const mutations = {
