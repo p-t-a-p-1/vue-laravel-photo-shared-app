@@ -4,12 +4,13 @@
  * アクション → コミットでミューテーション呼び出し → ステート更新
  */
 
-import { OK } from '../util'
+import { OK, UNPROCESSABLE_ENTITY } from '../util'
 
-// データの入れ物（ログイン中のユーザーデータ）
+// データの入れ物
 const state = {
-    user: null,
-    apiStatus: null // API呼び出しが成功したか失敗したかを表す
+    user: null, // ログイン中のユーザーデータ
+    apiStatus: null, // API呼び出しが成功したか失敗したかを表す
+    loginErrorMessages: null // エラーメッセージ
 }
 
 // ステートの内容から算出される値（ユーザーがログイン中であるかどうか）
@@ -28,6 +29,9 @@ const mutations = {
     },
     setApiStatus (state, status) {
         state.apiStatus = status
+    },
+    setLoginErrorMessages (state, messages) {
+        state.loginErrorMessages = messages
     }
 }
 
@@ -53,8 +57,19 @@ const actions = {
 
         // 失敗したらfalse
         context.commit('setApiStatus', false)
-        // あるストアモジュールから別のモジュールのミューテーションをcommitする場合は{ root: true }が必要
-        context.commit('error/setCode', response.status, { root: true })
+
+        if (response.status === UNPROCESSABLE_ENTITY) {
+            // ページコンポーネント内でエラーの表示を行う必要があるので
+            // error/setCodeミューテーションを呼び出さない
+            // 代わりにloginErrorMesagesにメッセージをセットする
+            context.commit('setLoginErrorMessages', response.data.errors)
+        } else {
+            // あるストアモジュールから別のモジュールのミューテーションをcommitする場合は{ root: true }が必要
+            context.commit('error/setCode', response.status, { root: true })
+        }
+
+
+
     },
     async logout (context) {
         const response = await axios.post('/api/logout')

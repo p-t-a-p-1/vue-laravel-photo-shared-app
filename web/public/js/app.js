@@ -2126,6 +2126,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2196,6 +2205,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   computed: {
     apiStatus: function apiStatus() {
       return this.$store.state.auth.apiStatus;
+    },
+    loginErrors: function loginErrors() {
+      return this.$store.state.auth.loginErrorMessages;
     }
   }
 });
@@ -3628,6 +3640,30 @@ var render = function() {
             }
           },
           [
+            _vm.loginErrors
+              ? _c("div", { staticClass: "errors" }, [
+                  _vm.loginErrors.email
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.loginErrors.email, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.loginErrors.password
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.loginErrors.password, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e()
+                ])
+              : _vm._e(),
+            _vm._v(" "),
             _c("label", { attrs: { for: "login-email" } }, [_vm._v("Email")]),
             _vm._v(" "),
             _c("input", {
@@ -20879,11 +20915,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
  *
  * アクション → コミットでミューテーション呼び出し → ステート更新
  */
- // データの入れ物（ログイン中のユーザーデータ）
+ // データの入れ物
 
 var state = {
   user: null,
-  apiStatus: null // API呼び出しが成功したか失敗したかを表す
+  // ログイン中のユーザーデータ
+  apiStatus: null,
+  // API呼び出しが成功したか失敗したかを表す
+  loginErrorMessages: null // エラーメッセージ
 
 }; // ステートの内容から算出される値（ユーザーがログイン中であるかどうか）
 // ステートをもとに演算した結果が欲しい時にゲッターを使う
@@ -20905,6 +20944,9 @@ var mutations = {
   },
   setApiStatus: function setApiStatus(state, status) {
     state.apiStatus = status;
+  },
+  setLoginErrorMessages: function setLoginErrorMessages(state, messages) {
+    state.loginErrorMessages = messages;
   }
 }; // ステートを非同期処理で更新するためのメソッド
 // APIとの通信などの非同期処理を行った後にミューテーションを呼び出してステートを更新する
@@ -20962,11 +21004,19 @@ var actions = {
 
             case 8:
               // 失敗したらfalse
-              context.commit('setApiStatus', false); // あるストアモジュールから別のモジュールのミューテーションをcommitする場合は{ root: true }が必要
+              context.commit('setApiStatus', false);
 
-              context.commit('error/setCode', response.status, {
-                root: true
-              });
+              if (response.status === _util__WEBPACK_IMPORTED_MODULE_1__["UNPROCESSABLE_ENTITY"]) {
+                // ページコンポーネント内でエラーの表示を行う必要があるので
+                // error/setCodeミューテーションを呼び出さない
+                // 代わりにloginErrorMesagesにメッセージをセットする
+                context.commit('setLoginErrorMessages', response.data.errors);
+              } else {
+                // あるストアモジュールから別のモジュールのミューテーションをcommitする場合は{ root: true }が必要
+                context.commit('error/setCode', response.status, {
+                  root: true
+                });
+              }
 
             case 10:
             case "end":
@@ -21099,7 +21149,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*!******************************!*\
   !*** ./resources/js/util.js ***!
   \******************************/
-/*! exports provided: getCookieValue, OK, CREATED, INTERNAL_SERVER_ERROR */
+/*! exports provided: getCookieValue, OK, CREATED, INTERNAL_SERVER_ERROR, UNPROCESSABLE_ENTITY */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21108,6 +21158,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OK", function() { return OK; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CREATED", function() { return CREATED; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "INTERNAL_SERVER_ERROR", function() { return INTERNAL_SERVER_ERROR; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UNPROCESSABLE_ENTITY", function() { return UNPROCESSABLE_ENTITY; });
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -21147,7 +21198,9 @@ function getCookieValue(searchKey) {
 }
 var OK = 200;
 var CREATED = 201;
-var INTERNAL_SERVER_ERROR = 500;
+var INTERNAL_SERVER_ERROR = 500; // バリデーションエラー
+
+var UNPROCESSABLE_ENTITY = 422;
 
 /***/ }),
 
