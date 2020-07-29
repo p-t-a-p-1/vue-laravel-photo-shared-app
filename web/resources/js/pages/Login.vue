@@ -59,8 +59,10 @@ export default {
             // autストアのloginアクションを呼び出す
             await this.$store.dispatch('auth/login', this.loginForm)
 
-            // トップページに移動
-            this.$router.push('/')
+            if (this.apiStatus) {
+                // トップページに移動
+                this.$router.push('/')
+            }
 
         },
         async register () {
@@ -73,6 +75,11 @@ export default {
 
             // 上の await 非同期処理の完了を待ってからトップページに移動
             this.$router.push('/')
+        }
+    },
+    computed: {
+        apiStatus () {
+            return this.$store.state.auth.apiStatus
         }
     }
 }

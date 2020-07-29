@@ -3,9 +3,13 @@
  *
  * アクション → コミットでミューテーション呼び出し → ステート更新
  */
+
+import { OK } from '../util'
+
 // データの入れ物（ログイン中のユーザーデータ）
 const state = {
-    user: null
+    user: null,
+    apiStatus: null // API呼び出しが成功したか失敗したかを表す
 }
 
 // ステートの内容から算出される値（ユーザーがログイン中であるかどうか）
@@ -21,6 +25,9 @@ const getters = {
 const mutations = {
     setUser (state, user) {
         state.user = user
+    },
+    setApiStatus (state, status) {
+        state.apiStatus = status
     }
 }
 
@@ -32,8 +39,22 @@ const actions = {
         context.commit('setUser', response.data)
     },
     async login (context, data) {
-        const response = await axios.post('/api/login', data)
-        context.commit('setUser', response.data)
+        // 最初は null
+        context.commit('setApiStatus', null)
+        // API通信が成功した場合も失敗した場合も response にレスポンスオブジェクトを代入
+        const response = await axios.post('/api/login', data).catch(err => err.response || err)
+
+        if (response.status === OK) {
+            // 成功したらtrue
+            context.commit('setApiStatus', true)
+            context.commit('setUser', response.data)
+            return false
+        }
+
+        // 失敗したらfalse
+        context.commit('setApiStatus', false)
+        // あるストアモジュールから別のモジュールのミューテーションをcommitする場合は{ root: true }が必要
+        context.commit('error/setCode', response.status, { root: true })
     },
     async logout (context) {
         const response = await axios.post('/api/logout')

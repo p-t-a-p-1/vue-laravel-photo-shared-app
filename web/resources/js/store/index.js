@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import auth from './auth'
+import error from './error'
 
 Vue.use(Vuex)
 
@@ -9,7 +10,8 @@ Vue.use(Vuex)
 // 認証関係のデータストア、写真データのストアなど
 const store = new Vuex.Store({
     modules: {
-        auth
+        auth,
+        error
     }
 })
 
