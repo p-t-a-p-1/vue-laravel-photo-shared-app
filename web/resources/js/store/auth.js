@@ -4,13 +4,14 @@
  * アクション → コミットでミューテーション呼び出し → ステート更新
  */
 
-import { OK, UNPROCESSABLE_ENTITY } from '../util'
+import { OK, CREATED, UNPROCESSABLE_ENTITY } from '../util'
 
 // データの入れ物
 const state = {
     user: null, // ログイン中のユーザーデータ
     apiStatus: null, // API呼び出しが成功したか失敗したかを表す
-    loginErrorMessages: null // エラーメッセージ
+    loginErrorMessages: null, // ログインエラーメッセージ
+    registerErrorMEssages: null // 登録エラーメッセージ
 }
 
 // ステートの内容から算出される値（ユーザーがログイン中であるかどうか）
@@ -32,21 +33,39 @@ const mutations = {
     },
     setLoginErrorMessages (state, messages) {
         state.loginErrorMessages = messages
+    },
+    setRegisterErrorMessages (state, messages) {
+        state.setRegisterErrorMessages = messages
     }
 }
 
 // ステートを非同期処理で更新するためのメソッド
 // APIとの通信などの非同期処理を行った後にミューテーションを呼び出してステートを更新する
 const actions = {
+    // 会員登録
     async register (context, data) {
+        context.commit('setApiStatus', null)
         const response = await axios.post('/api/register', data)
-        context.commit('setUser', response.data)
+
+        if (response.status === CREATED) {
+            context.commit('setApiStatus', true)
+            context.commmit('setUser', response.data)
+            return false
+        }
+
+        context.commit('setApiStatus', false)
+        if (response.status === UNPROCESSABLE_ENTITY) {
+            context.commit('setRegisterErrorMessages', response.data.errors)
+        } else {
+            context.commit('error/setCode', response.status, { root: true })
+        }
     },
+    // ログイン
     async login (context, data) {
         // 最初は null
         context.commit('setApiStatus', null)
         // API通信が成功した場合も失敗した場合も response にレスポンスオブジェクトを代入
-        const response = await axios.post('/api/login', data).catch(err => err.response || err)
+        const response = await axios.post('/api/login', data)
 
         if (response.status === OK) {
             // 成功したらtrue
@@ -68,18 +87,36 @@ const actions = {
             context.commit('error/setCode', response.status, { root: true })
         }
 
-
-
     },
+    // ログアウト
     async logout (context) {
+        context.commit('setApiStatus', null)
         const response = await axios.post('/api/logout')
-        // userステートをnullにする
-        context.commit('setUser', null)
+
+        if (response.status === OK) {
+            context.commit('setApiStatus', true)
+            // userステートをnullにする
+            context.commit('setUser', null)
+            return false
+        }
+
+        context.commit('setApiStatus', false)
+        context.commit('error/setCode', response.status, { root: true })
     },
+    // ログインユーザーチェック
     async currentUser(context) {
+        context.commit('setApiStatus', null)
         const response = await axios.get('/api/user')
-        const user = response.data || null;
-        context.commit('setUser', user)
+        const user = response.data || null
+
+        if (response.status === OK) {
+            context.commit('setApiStatus', true)
+            context.commit('setUser', user)
+            return false
+        }
+
+        context.commit('setApiStatus', false)
+        context.commit('error/setCode', response.status, { root: true })
     }
 }
 
