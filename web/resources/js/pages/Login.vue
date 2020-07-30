@@ -84,6 +84,9 @@ export default {
 
             // 上の await 非同期処理の完了を待ってからトップページに移動
             this.$router.push('/')
+        },
+        clearError () {
+            this.$store.commit('auth/setLoginErrorMessages', null)
         }
     },
     computed: {
@@ -93,6 +96,9 @@ export default {
         loginErrors () {
             return this.$store.state.auth.loginErrorMessages
         }
+    },
+    created () {
+        this.clearError()
     }
 }
 </script>

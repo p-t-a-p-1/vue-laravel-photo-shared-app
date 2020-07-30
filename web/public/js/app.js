@@ -2200,6 +2200,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee2);
       }))();
+    },
+    clearError: function clearError() {
+      this.$store.commit('auth/setLoginErrorMessages', null);
     }
   },
   computed: {
@@ -2209,6 +2212,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     loginErrors: function loginErrors() {
       return this.$store.state.auth.loginErrorMessages;
     }
+  },
+  created: function created() {
+    this.clearError();
   }
 });
 
