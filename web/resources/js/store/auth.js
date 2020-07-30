@@ -11,7 +11,7 @@ const state = {
     user: null, // ログイン中のユーザーデータ
     apiStatus: null, // API呼び出しが成功したか失敗したかを表す
     loginErrorMessages: null, // ログインエラーメッセージ
-    registerErrorMEssages: null // 登録エラーメッセージ
+    registerErrorMessages: null // 登録エラーメッセージ
 }
 
 // ステートの内容から算出される値（ユーザーがログイン中であるかどうか）

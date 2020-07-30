@@ -28,6 +28,18 @@
         </div>
         <div class="panel" v-show="tab === 2">
             <form class="form" @submit.prevent="register">
+                <div v-if="registerErrors" class="errors">
+                    <ul v-if="registerErrors.name">
+                        <li v-for="msg in registerErrors.name" :key="msg">{{ msg }}</li>
+                    </ul>
+                    <ul v-if="registerErrors.email">
+                        <li v-for="msg in registerErrors.email" :key="msg">{{ msg }}</li>
+                    </ul>
+                    <ul v-if="registerErrors.password">
+                        <li v-for="msg in registerErrors.password" :key="msg">{{ msg }}</li>
+                    </ul>
+                </div>
+
                 <label for="username">Name</label>
                 <input type="text" class="form__item" id="username" v-model="registerForm.name">
                 <label for="email">Email</label>
@@ -82,11 +94,15 @@ export default {
             // 第一引数でアクションの名前指定（今回は名前空間つき）、第二でフォームの入力値
             await this.$store.dispatch('auth/register', this.registerForm)
 
-            // 上の await 非同期処理の完了を待ってからトップページに移動
-            this.$router.push('/')
+            if (this.apiStatus) {
+                // 上の await 非同期処理の完了を待ってからトップページに移動
+                this.$router.push('/')
+            }
+
         },
         clearError () {
             this.$store.commit('auth/setLoginErrorMessages', null)
+            this.$store.commit('auth/setRegisterErrorMessages', null)
         }
     },
     computed: {
@@ -95,6 +111,9 @@ export default {
         },
         loginErrors () {
             return this.$store.state.auth.loginErrorMessages
+        },
+        registerErrors () {
+            return this.$store.state.auth.registerErrorMessages
         }
     },
     created () {
