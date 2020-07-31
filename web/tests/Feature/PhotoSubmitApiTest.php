@@ -47,4 +47,49 @@ class PhotoSubmitApiTest extends TestCase
         // DBに挿入されたファイル名のファイルがストレージに保存されているかチェック
         Storage::cloud()->assertExists($photo->filename);
     }
+
+
+    /**
+     * @test
+     */
+    public function should_データベースエラーの場合はファイルを保存しない()
+    {
+        // エラーを起こす
+        Schema::drop('photos');
+
+        // テスト用ストレージ
+        Storage::fake('s3');
+
+        $response = $this->actingAs($this->user)->json('POST', route('photo.create'), [
+            // ダミーファイルを作成して送信している
+            'photo' => UploadedFile::fake()->image('photo.jpg'),
+        ]);
+
+        // レスポンスがINTERNAL_SERVER_ERRORになるかチェック
+        $response->assertStatus(500);
+
+        // ストレージにファイルが保存されていないかチェック
+        $this->assertEquals(0, count(Storage::cloud()->files()));
+    }
+
+
+    /**
+     * @test
+     */
+    public function should_ファイル保存エラーの場合はDBへの挿入はしない()
+    {
+
+        // 保存時にエラーを起こさせる
+        Storage::shouldReceive('cloud')->once()->andReturnNull();
+
+        $response = $this->actingAs($this->user)->json('POST', route('photo.create'), [
+            'photo' => UploadedFile::fake()->image('photo.jpg'),
+        ]);
+
+        // レスポンスがINTERNAL_SERVER_ERRORになるかチェック
+        $response->assertStatus(500);
+
+        // DBに何も入ってないことをチェック
+        $this->assertEmpty(Photo::all());
+    }
 }
