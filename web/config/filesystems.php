@@ -25,7 +25,7 @@ return [
     | will be bound as the Cloud disk implementation in the container.
     |
     */
-
+    // AzureやGCPを使う場合はFILESYSTEM_CLOUDの値を変更すること
     'cloud' => env('FILESYSTEM_CLOUD', 's3'),
 
     /*

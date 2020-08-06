@@ -17,7 +17,7 @@ class PhotoSubmitApiTest extends TestCase
 
     public function setUp(): void
     {
-        parent::setUp;
+        parent::setUp();
 
         $this->user = factory(User::class)->create();
     }
@@ -29,7 +29,7 @@ class PhotoSubmitApiTest extends TestCase
     {
         // S3ではなくテスト用のストレージを使用する
         // → storage/framework/testing
-        Storage::fake('s3')
+        Storage::fake('s3');
 
         $response = $this->actingAs($this->user)->json('POST', route('photo.create'), [
             // ダミーファイルを作成して送信している
