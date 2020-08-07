@@ -2109,6 +2109,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 // このコンポーネントの表示/非表示を親コンポーネント側で制御できるように
 // valueを渡す
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2116,6 +2119,42 @@ __webpack_require__.r(__webpack_exports__);
     value: {
       type: Boolean,
       required: true
+    }
+  },
+  data: function data() {
+    return {
+      preview: null
+    };
+  },
+  methods: {
+    // フォームでファイルが選択されたら実行される
+    onFileChange: function onFileChange(event) {
+      var _this = this;
+
+      // 何もしなかったら処理中断
+      if (event.target.files.length === 0) {
+        return false;
+      } // ファイルが画像でない場合は処理中断
+
+
+      if (!event.target.files[0].type.match('image.*')) {
+        return false;
+      } // FileReaderクラスのインスタンスを取得
+
+
+      var reader = new FileReader(); // ファイルを読み込み終わったタイミングで実行する
+
+      reader.onload = function (e) {
+        // previewに読み込み結果（データURL）を代入
+        // previewに値が入ると<output>につけたv-ifがtrueと判定される
+        // <output>内部の<img>のsrc属性はpreviewの値を参照してるので
+        // 結果として画像が表示される
+        _this.preview = e.target.result;
+      }; // ファイルを読み込む
+      // 読み込まれたファイルはデータURL形式で受け取れる
+
+
+      reader.readAsDataURL(event.target.files[0]);
     }
   }
 });
@@ -3689,7 +3728,21 @@ var render = function() {
     [
       _c("h2", { staticClass: "title" }, [_vm._v("Submit a photo")]),
       _vm._v(" "),
-      _vm._m(0)
+      _c("form", { staticClass: "form" }, [
+        _c("input", {
+          staticClass: "form__item",
+          attrs: { type: "file" },
+          on: { change: _vm.onFileChange }
+        }),
+        _vm._v(" "),
+        _vm.preview
+          ? _c("output", { staticClass: "form__output" }, [
+              _c("img", { attrs: { src: _vm.preview, alt: "" } })
+            ])
+          : _vm._e(),
+        _vm._v(" "),
+        _vm._m(0)
+      ])
     ]
   )
 }
@@ -3698,16 +3751,12 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("form", { staticClass: "form" }, [
-      _c("input", { staticClass: "form__item", attrs: { type: "file" } }),
-      _vm._v(" "),
-      _c("div", { staticClass: "form__button" }, [
-        _c(
-          "button",
-          { staticClass: "button button--inverse", attrs: { type: "submit" } },
-          [_vm._v("submit")]
-        )
-      ])
+    return _c("div", { staticClass: "form__button" }, [
+      _c(
+        "button",
+        { staticClass: "button button--inverse", attrs: { type: "submit" } },
+        [_vm._v("submit")]
+      )
     ])
   }
 ]
