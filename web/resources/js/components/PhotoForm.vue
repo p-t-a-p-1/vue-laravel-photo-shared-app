@@ -2,6 +2,11 @@
     <div v-show="value" class="photo-form">
         <h2 class="title">Submit a photo</h2>
         <form class="form" @submit.prevent="submit">
+            <div class="errors" v-if="errors">
+                <ul v-if="errors.photo">
+                    <li v-for="msg in errors.photo" :key="msg">{{ msg }}</li>
+                </ul>
+            </div>
             <input class="form__item" type="file" @change="onFileChange">
             <output class="form__output" v-if="preview">
                 <img :src="preview" alt="" />
@@ -14,6 +19,8 @@
 </template>
 
 <script>
+import { CREATED, UNPROCESSABLE_ENTITY } from '../util'
+
 // このコンポーネントの表示/非表示を親コンポーネント側で制御できるように
 // valueを渡す
 export default {
@@ -27,6 +34,7 @@ export default {
         return {
             preview: null,
             photo: null, // 選択中のファイルを格納
+            errors: null,
         }
     },
     methods: {
@@ -74,11 +82,27 @@ export default {
             formData.append('photo', this.photo)
             const response = await axios.post('/api/photos', formData)
 
+            // バリデーションエラー
+            // 値をクリアしたりフォームを閉じたりしないためクリアの前に処理書く
+            if (response.status === UNPROCESSABLE_ENTITY) {
+                this.errors = response.data.errors
+                return false
+            }
+
             // 入力値をクリア
             this.reset()
             // NavbarのshowRoomがfalseになる
             // PhotoFormのvalueもfalseになるので非表示になる仕組み
             this.$emit('input', false)
+
+            // 投稿以外のステータスコードの場合
+            if (response.status !== CREATED) {
+                this.$store.commit('error/setCode', response.status)
+                return false
+            }
+
+            // 送信した写真IDの詳細ページに遷移
+            this.$router.push(`/photos/${response.data.id}`)
         }
     }
 }
