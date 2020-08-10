@@ -4,7 +4,7 @@
 
 use App\Model;
 use Faker\Generator as Faker;
-use Illiminate\Support\Str;
+use Illuminate\Support\Str;
 
 // テストデータ作成
 $factory->define(App\Photo::class, function (Faker $faker) {

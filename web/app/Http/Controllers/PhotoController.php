@@ -13,8 +13,8 @@ class PhotoController extends Controller
 {
     public function __construct()
     {
-        // 認証が必要
-        $this->middleware('auth');
+        // 認証が必要（写真一覧APIは除外）
+        $this->middleware('auth')->except(['index']);
     }
 
 
@@ -60,5 +60,21 @@ class PhotoController extends Controller
         // リソースの新規作成なので
         // レスポンスコードはCREATEDの201を返却する
         return response($photo, 201);
+    }
+
+    /**
+     * 写真一覧
+     */
+    public function index()
+    {
+        // withメソッド → リレーションを事前に読み込むことで、N+1問題を回避できる
+        //  N+1 はじめの1回のSQLでModelを取得し、そのModelに対するデータ数分（N回）SQL叩く実行されること
+        // paginateメソッド → ページ送り機能の追加
+        //  JSONレスポンスで示したtotal（総ページ数）やcurrent_page（現在のページ）などの情報が自動追加
+        //  2ページ目以降の写真一覧を取得したい場合はURLパラメータにpage=2を付ければok
+        $photos = Photo::with(['owner'])->orderBy(Photo::CREATED_AT, 'desc')->paginate();
+
+        // コントローラーからモデルクラスのインスタンスをreturnすると、自動でJSONに変換されてレスポンスされる
+        return $photos;
     }
 }
