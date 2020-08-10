@@ -13,8 +13,8 @@ class PhotoController extends Controller
 {
     public function __construct()
     {
-        // 認証が必要（写真一覧APIは除外）
-        $this->middleware('auth')->except(['index']);
+        // 認証が必要（写真一覧・ダウンロードAPIは認証不要）
+        $this->middleware('auth')->except(['index', 'download']);
     }
 
 
@@ -76,5 +76,28 @@ class PhotoController extends Controller
 
         // コントローラーからモデルクラスのインスタンスをreturnすると、自動でJSONに変換されてレスポンスされる
         return $photos;
+    }
+
+    /**
+     * 写真ダウンロード
+     * @param Photo $photo
+     * @return \Illuminate\Http\Response
+     */
+    public function download(Photo $photo)
+    {
+        // 写真の存在チェック
+        if (! Storage::cloud()->exists($photo->filename)) {
+            abort(404);
+        }
+
+        // ダウンロードさせるために保存ダイアログを開くようにする
+        $disposition = 'attachment; filename="' . $photo->filename . '"';
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Dispostion' => $disposition,
+        ];
+
+        // S3から取得した画像ファイルをブラウザの保存ダイアログから開くようにしてダウンロードさせる
+        return response(Storage::cloud()->get($photo->filename), 200, $headers);
     }
 }
