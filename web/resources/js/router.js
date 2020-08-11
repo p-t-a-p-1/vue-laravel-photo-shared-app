@@ -17,7 +17,12 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        component: PhotoList
+        component: PhotoList,
+        props: route => {
+            const page = route.query.page
+            // 不正な値は1とする
+            return { page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1 }
+        }
     },
     {
         // idは写真IDが動的に変わる
@@ -51,6 +56,9 @@ const routes = [
 // VueRouterインスタンスを作成
 const router = new VueRouter({
     mode: 'history',
+    scrollBehavior () {
+        return {x: 0, y: 0}
+    },
     routes
 })
 
