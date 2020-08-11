@@ -13,8 +13,8 @@ class PhotoController extends Controller
 {
     public function __construct()
     {
-        // 認証が必要（写真一覧・ダウンロードAPIは認証不要）
-        $this->middleware('auth')->except(['index', 'download']);
+        // 認証が必要（写真一覧・ダウンロード・写真詳細APIは認証不要）
+        $this->middleware('auth')->except(['index', 'download', 'show']);
     }
 
 
@@ -99,5 +99,18 @@ class PhotoController extends Controller
 
         // S3から取得した画像ファイルをブラウザの保存ダイアログから開くようにしてダウンロードさせる
         return response(Storage::cloud()->get($photo->filename), 200, $headers);
+    }
+
+    /**
+     * 写真詳細
+     * @param string id
+     * @return Photo
+     */
+    public function show(string $id)
+    {
+        $photo = Photo::where('id', $id)->with(['owner'])->first();
+
+        // 写真データがない場合は404
+        return $photo ?? abort(404);
     }
 }
