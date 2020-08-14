@@ -74,7 +74,7 @@ class PhotoController extends Controller
         // paginateメソッド → ページ送り機能の追加
         //  JSONレスポンスで示したtotal（総ページ数）やcurrent_page（現在のページ）などの情報が自動追加
         //  2ページ目以降の写真一覧を取得したい場合はURLパラメータにpage=2を付ければok
-        $photos = Photo::with(['owner'])->orderBy(Photo::CREATED_AT, 'desc')->paginate();
+        $photos = Photo::with(['owner', 'likes'])->orderBy(Photo::CREATED_AT, 'desc')->paginate();
 
         // コントローラーからモデルクラスのインスタンスをreturnすると、自動でJSONに変換されてレスポンスされる
         return $photos;
@@ -110,7 +110,7 @@ class PhotoController extends Controller
      */
     public function show(string $id)
     {
-        $photo = Photo::where('id', $id)->with(['owner', 'comments.author'])->first();
+        $photo = Photo::where('id', $id)->with(['owner', 'comments.author', 'likes'])->first();
 
         // 写真データがない場合は404
         return $photo ?? abort(404);

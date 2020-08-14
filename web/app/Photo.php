@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class Photo extends Model
 {
@@ -21,6 +22,8 @@ class Photo extends Model
     // JSONに含める属性をカスタマイズ
     protected $appends = [
         'url',
+        'likes_count',
+        'liked_by_user',
     ];
 
     // JSONに含める属性
@@ -28,7 +31,9 @@ class Photo extends Model
         'id',
         'owner',
         'url',
-        'comments'
+        'comments',
+        'likes_count',
+        'liked_by_user',
     ];
 
     // JSONに含めない属性
@@ -121,5 +126,31 @@ class Photo extends Model
         // クラウドストレージのurlメソッドはS3上のファイルの公開URLを返す
         // .envで定義したAWS_URL + 引数のファイル名
         return Storage::cloud()->url($this->attributes['filename']);
+    }
+
+    /**
+     * アクセサ - likes_count
+     * @return int
+     */
+    public function getLikesCountAttribute()
+    {
+        return $this->likes->count();
+    }
+
+    /**
+     * アクセサ - liked_by_user
+     * @return boolean
+     */
+    public function getLikedByUserAttribute()
+    {
+        // ログインしてない場合
+        if (Auth::guest()) {
+            return false;
+        }
+
+        // ログインユーザーのIDと合致するいいねが含まれるか
+        return $this->likes->contains(function ($user) {
+            return $user->id === Auth::user()->id;
+        });
     }
 }
