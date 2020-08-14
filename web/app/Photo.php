@@ -103,6 +103,16 @@ class Photo extends Model
     }
 
     /**
+     * リレーションシップ likesテーブル
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function likes()
+    {
+        // withTimestampsはlikesテーブルにデータ挿入時にcreated_atおよびupdated_atカラムを更新
+        return $this->belongsToMany('App\User', 'likes')->withTimestamps();
+    }
+
+    /**
      * アクセサ（インスタンス外からメソッドを利用してメンバ変数・属性を取得） - url
      * @return string
      */
