@@ -53,4 +53,4 @@ Route::get('/refresh-token', function (Request $request) {
     $request->session()->regenerateToken();
 
     return response()->json();
-})
+});
