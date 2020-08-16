@@ -16,7 +16,7 @@ class PhotoController extends Controller
     public function __construct()
     {
         // 認証が必要（写真一覧・ダウンロード・写真詳細APIは認証不要）
-        $this->middleware('auth')->except(['index', 'download', 'show']);
+        $this->middleware('auth')->except(['index', 'download', 'show', 'userIndex']);
     }
 
 
@@ -78,6 +78,17 @@ class PhotoController extends Controller
 
         // コントローラーからモデルクラスのインスタンスをreturnすると、自動でJSONに変換されてレスポンスされる
         return $photos;
+    }
+
+    /**
+     * 投稿者ごとの写真一覧取得
+     */
+    public function userIndex($user_id)
+    {
+        $photo = Photo::where('user_id', $user_id)->with(['owner', 'comments.author', 'likes'])->first();
+
+        // 写真データがない場合は404
+        return $photo ?? abort(404);
     }
 
     /**
@@ -174,4 +185,6 @@ class PhotoController extends Controller
 
         return ['photo_id' => $id];
     }
+
+
 }
