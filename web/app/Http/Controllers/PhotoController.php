@@ -85,7 +85,7 @@ class PhotoController extends Controller
      */
     public function userIndex($user_id)
     {
-        $photo = Photo::where('user_id', $user_id)->with(['owner', 'comments.author', 'likes'])->first();
+        $photo = Photo::where('user_id', $user_id)->with(['owner', 'likes'])->first();
 
         // 写真データがない場合は404
         return $photo ?? abort(404);
