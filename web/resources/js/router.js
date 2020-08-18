@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 // コンポーネントをインポート
 import PhotoList from './pages/PhotoList.vue'
+import UserPhotoList from './pages/UserPhotoList.vue'
 import PhotoDetail from './pages/PhotoDetail.vue'
 import Login from './pages/Login.vue'
 import NotFound from './pages/errors/NotFound.vue'
@@ -23,6 +24,16 @@ const routes = [
             const page = route.query.page
             // 不正な値は1とする
             return { page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1 }
+        }
+    },
+    {
+        // idは写真IDが動的に変わる
+        path: '/photos/user/:user_id',
+        component: UserPhotoList,
+        props: route => {
+            const page = route.query.page
+            // 不正な値は1とする
+            return { user_id: route.params.user_id, page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1 }
         }
     },
     {
