@@ -1,5 +1,6 @@
 <template>
     <div class="photo-list">
+        <h2>{{ this.userName }}の写真一覧</h2>
         <div class="grid">
             <Photo
                 class="grid__item"
@@ -40,6 +41,7 @@ export default {
             photos: [],
             currentPage: 0,
             lastPage: 0,
+            userName: '',
         }
     },
     methods: {
@@ -55,20 +57,21 @@ export default {
             this.photos = response.data.data
             this.currentPage = response.data.current_page
             this.lastPage = response.data.last_page
+            this.userName = response.data.data[0].owner.name
         },
-        onLikeClick({ user_id, liked }) {
+        onLikeClick({ id, liked }) {
             if (! this.$store.getters['auth/check']) {
                 alert('いいね機能を使うにはログインしてください')
                 return false
             }
 
             if (liked) {
-                this.unlike(user_id)
+                this.unlike(id)
             } else {
-                this.like(user_id)
+                this.like(id)
             }
         },
-        async like (user_id) {
+        async like (id) {
             const response = await axios.put(`/api/photos/${id}/like`)
 
             if (response.status !== OK) {
