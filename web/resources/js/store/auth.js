@@ -49,7 +49,7 @@ const actions = {
 
         if (response.status === CREATED) {
             context.commit('setApiStatus', true)
-            context.commmit('setUser', response.data)
+            context.commit('setUser', response.data)
             return false
         }
 

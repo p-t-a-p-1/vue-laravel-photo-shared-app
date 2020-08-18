@@ -31,6 +31,7 @@ class PhotoListApiTest extends TestCase
         $expected_data = $photos->map(function ($photo) {
             return [
                 'id' => $photo->id,
+                'user_id' => $photo->user_id,
                 'url' => $photo->url,
                 'owner' => [
                     'name' => $photo->owner->name,
