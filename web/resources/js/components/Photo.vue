@@ -26,12 +26,37 @@
                     <i class="icon ion-md-arrow-round-down"></i>
                 </a>
             </div>
-            <div class="photo__username">
-                {{ item.owner.name }}
-            </div>
+            <a
+                class="photo__username"
+                :href="`/photos/user/${item.user_id}`"
+                @click.stop
+            >{{ item.owner.name }}</a>
+
         </RouterLink>
     </div>
 </template>
+
+<style lang="scss">
+.photo__username {
+    background: #fff;
+    border: 0;
+    border-radius: 0.25rem;
+    color: #222;
+    cursor: pointer;
+    display: inline-table;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1;
+    margin-left: 0.25rem;
+    opacity: 0.8;
+    outline: none;
+    padding: 0.5em 0.75em;
+    text-decoration: none;
+    &:hover {
+        opacity: 1.0;
+    }
+}
+</style>
 
 <script>
 export default {
