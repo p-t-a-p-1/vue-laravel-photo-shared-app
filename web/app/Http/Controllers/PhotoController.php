@@ -83,12 +83,11 @@ class PhotoController extends Controller
     /**
      * 投稿者ごとの写真一覧取得
      */
-    public function userIndex($user_id)
+    public function userIndex(string $user_id)
     {
-        $photo = Photo::where('user_id', $user_id)->with(['owner', 'likes'])->first();
-
+        $photos = Photo::where('user_id', $user_id)->with(['owner', 'likes'])->orderBy(Photo::CREATED_AT, 'desc')->paginate();
         // 写真データがない場合は404
-        return $photo ?? abort(404);
+        return $photos;
     }
 
     /**
