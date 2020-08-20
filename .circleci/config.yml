@@ -16,7 +16,7 @@ jobs:
     working_directory: ~/ci-demo
 
     steps:
-      # git clone
+      # git pull
       - checkout
       - run:
           name: Update apt-get
