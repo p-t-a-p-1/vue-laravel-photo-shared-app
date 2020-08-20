@@ -5,54 +5,45 @@
 version: 2
 jobs:
   build:
+    # 使用するイメージを指定（https://circleci.com/docs/2.0/circleci-images/）
     docker:
-      # Specify the version you desire here
-      - image: circleci/php:7.1-node-browsers
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # Using the RAM variation mitigates I/O contention
-      # for database intensive operations.
-      # - image: circleci/mysql:5.7-ram
-      #
-      # - image: redis:2.8.19
+      - image: circleci/php:7.4.1-node-browsers
+      - image: circleci/postgres:11-alpine
+    # DB接続情報（DB_CONNECTIONはconfig.database.phpでdefaultで読み込む値）
+    environment:
+      - DB_CONNECTION: circle_testing
+    # 以降の作業を行うディレクトリ指定
+    working_directory: ~/ci-demo
 
     steps:
+      # git clone
       - checkout
-
-      - run: sudo apt update # PHP CircleCI 2.0 Configuration File# PHP CircleCI 2.0 Configuration File sudo apt install zlib1g-dev libsqlite3-dev
-      - run: sudo docker-php-ext-install zip
-
-      # Download and cache dependencies
+      - run:
+          name: Update apt-get
+          command: sudo apt-get update
+      - run:
+          name: apt-get install
+          command: apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
+      - run:
+          name:
+          command: docker-php-ext-install -j$(nproc) pdo_pgsql
+      - run:
+          name: Configure GD
+          command: docker-php-ext-configure gd --with-freetype --with-jpeg
+      - run:
+          name: Install GD
+          command: docker-php-ext-install -j$(nproc) gd
       - restore_cache:
           keys:
-            # "composer.lock" can be used if it is committed to the repo
             - v1-dependencies-{{ checksum "composer.json" }}
-            # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
-      - run: composer install -n --prefer-dist
-
+      - run:
+          name: Install PHP libraries
+          command: composer install -n --prefer-dist
       - save_cache:
-          key: v1-dependencies-{{ checksum "composer.json" }}
           paths:
             - ./vendor
-      - restore_cache:
-          keys:
-            - node-v1-{{ checksum "package.json" }}
-            - node-v1-
-      - run: yarn install
-      - save_cache:
-          key: node-v1-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-
-      # prepare the database
-      - run: touch storage/testing.sqlite
-      - run: php artisan migrate --env=testing --database=sqlite_testing --force
-
-      # run tests with phpunit or codecept
-      #- run: ./vendor/bin/phpunit
-      - run: ./vendor/bin/codecept build
-      - run: ./vendor/bin/codecept run
+          key: v1-dependencies-{{ checksum "composer.json" }}
+      - run:
+          name: Run PHPUnit
+          command: ./vendor/bin/phpunit --testdox
