@@ -23,16 +23,16 @@ jobs:
           command: sudo apt-get update
       - run:
           name: apt-get install
-          command: apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
+          command: sudo apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
       - run:
           name:
-          command: docker-php-ext-install -j$(nproc) pdo_pgsql
+          command: sudo docker-php-ext-install -j$(nproc) pdo_pgsql
       - run:
           name: Configure GD
-          command: docker-php-ext-configure gd --with-freetype --with-jpeg
+          command: sudo docker-php-ext-configure gd --with-freetype --with-jpeg
       - run:
           name: Install GD
-          command: docker-php-ext-install -j$(nproc) gd
+          command: sudo docker-php-ext-install -j$(nproc) gd
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "composer.json" }}
