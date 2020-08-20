@@ -9,7 +9,7 @@ jobs:
     docker:
       - image: circleci/php:7.4.1-node-browsers
       - image: circleci/postgres:11-alpine
-    # DB接続情報（DB_CONNECTIONはconfig.database.phpでdefaultで読み込む値）
+    # DB接続情報（ DB_CONNECTIONはconfig.database.phpでdefaultで読み込む値）
     environment:
       - DB_CONNECTION: circle_testing
     # 以降の作業を行うディレクトリ指定
