@@ -45,7 +45,7 @@ jobs:
             - v1-dependencies-
       - run:
           name: Install PHP libraries
-          command: composer install -n --prefer-dist
+          command: composer install -n --prefer-dist --working-dir=web
       - save_cache:
           paths:
             - ./vendor
