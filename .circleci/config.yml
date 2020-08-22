@@ -48,8 +48,8 @@ jobs:
           command: composer install -n --prefer-dist --working-dir=web
       - save_cache:
           paths:
-            - ./vendor
+            - ./web/vendor
           key: v1-dependencies-{{ checksum "web/composer.json" }}
       - run:
           name: Run PHPUnit
-          command: ./vendor/bin/phpunit --testdox
+          command: ./web/vendor/bin/phpunit --testdox
