@@ -41,15 +41,15 @@ jobs:
           command: ls
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "ci-demo/composer.json" }}
+            - v1-dependencies-{{ checksum "web/composer.json" }}
             - v1-dependencies-
       - run:
           name: Install PHP libraries
-          command: ci-demo/composer install -n --prefer-dist
+          command: web/composer install -n --prefer-dist
       - save_cache:
           paths:
             - ./vendor
-          key: v1-dependencies-{{ checksum "ci-demo/composer.json" }}
+          key: v1-dependencies-{{ checksum "web/composer.json" }}
       - run:
           name: Run PHPUnit
           command: ./vendor/bin/phpunit --testdox
