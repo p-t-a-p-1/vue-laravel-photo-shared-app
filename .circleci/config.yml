@@ -52,4 +52,4 @@ jobs:
           key: v1-dependencies-{{ checksum "web/composer.json" }}
       - run:
           name: Run PHPUnit
-          command: ./web/vendor/bin/phpunit
+          command: ./web/vendor/bin/phpunit --testdox web/tests/
