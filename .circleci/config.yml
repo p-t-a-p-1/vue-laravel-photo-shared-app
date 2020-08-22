@@ -51,5 +51,8 @@ jobs:
             - ./web/vendor
           key: v1-dependencies-{{ checksum "web/composer.json" }}
       - run:
+          name: Run Config Cache Clear
+          command: php artisan config:clear
+      - run:
           name: Run PHPUnit
           command: ./web/vendor/bin/phpunit --testdox web/tests/
