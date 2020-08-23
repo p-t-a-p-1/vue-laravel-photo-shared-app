@@ -99,18 +99,17 @@ return [
 
         // Circle CI用
         'circle_testing' => [
-            'driver' => 'mysql',
+            'driver' => 'pgsql',
             'host' => '127.0.0.1',
-            'port' => '3306',
+            'port' => '5432',
             'database' => 'circle_test',
             'username' => 'root',
             'password' => '',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
         ],
 
     ],
