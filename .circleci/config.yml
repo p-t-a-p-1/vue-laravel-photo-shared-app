@@ -59,4 +59,3 @@ jobs:
       - run:
           name: Run PHPUnit
           command: cd web && php artisan config:clear && ./vendor/bin/phpunit --testdox tests/
-
