@@ -53,9 +53,9 @@ jobs:
       - run:
           name: Run Config Cache Clear
           command: cd web && php artisan config:clear
-      - run:
-          name: Key Generate
-          command: cd web && php artisan key:generate
+    #   - run:
+    #       name: Key Generate
+    #       command: cd web && php artisan key:generate
       - run:
           name: Run PHPUnit
           command: ./web/vendor/bin/phpunit --testdox web/tests/
